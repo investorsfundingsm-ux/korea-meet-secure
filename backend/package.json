@@ -1,0 +1,13 @@
+{
+  "name": "korea-teams-backend",
+  "version": "3.0.0",
+  "description": "Korea Teams Proxy - Render Deployment",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0"
+  }
+}
